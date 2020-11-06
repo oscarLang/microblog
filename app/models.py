@@ -81,6 +81,7 @@ class User(UserMixin, db.Model):
                 followers.c.follower_id == self.id)
         own = Post.query.filter_by(user_id=self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
+    
 
 class Post(db.Model):
     """

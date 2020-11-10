@@ -1,0 +1,34 @@
+version: '3.3'
+services:
+    prod:
+        container_name: microblog
+        image: microblog:latest
+        restart: always
+        environment:
+            - MYSQL_DATABASE=microblog
+        ports:
+            - "8000:5000"
+        depends_on:
+            - mysql
+        networks:
+            microblog:
+    mysql:
+        container_name: mysql
+        restart: always
+        image: mysql/mysql-server:5.7
+        expose:
+          - "3306"
+        environment:
+            - MYSQL_RANDOM_ROOT_PASSWORD='yes'
+            - MYSQL_DATABASE="microblog"
+            - MYSQL_USER='microblog'
+            - MYSQL_PASSWORD=Wdrgy29098
+        volumes:
+            - /var/lib/mysql:/var/lib/mysql
+        command: --innodb-use-native-aio=0
+        networks:
+            microblog:
+networks:
+    microblog:
+volumes:
+    my-data:

@@ -1,0 +1,20 @@
+FROM python:3.6-alpine
+RUN adduser -D microblog
+
+WORKDIR /home/test
+
+# COPY . .
+COPY requirements requirements
+COPY requirements.txt Makefile test.sh pytest.ini .pylintrc .coveragerc ./
+
+RUN python3 -m venv .venv
+RUN apk add --update --virtual build-dependencies make gcc musl-dev
+RUN .venv/bin/pip3 install --upgrade pip
+RUN .venv/bin/pip3 install -r requirements.txt
+RUN .venv/bin/pip3 install -r requirements/test.txt
+RUN chmod +x test.sh
+
+RUN chown -R microblog:microblog ./
+USER microblog
+
+ENTRYPOINT ["./test.sh"]

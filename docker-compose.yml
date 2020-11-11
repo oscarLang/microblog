@@ -1,5 +1,13 @@
 version: '3.3'
 services:
+    test:
+        container_name: microblog_test
+        build:
+          dockerfile: docker/Dockerfile_test
+          context: .
+        volumes:
+          - "./tests:/home/test/tests"
+          - "./app:/home/test/app"
     prod:
         container_name: microblog
         image: microblog:latest

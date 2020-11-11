@@ -10,7 +10,7 @@ services:
           - "./app:/home/test/app"
     prod:
         container_name: microblog
-        image: microblog:latest
+        image: osln17/microblog:latest
         restart: always
         environment:
             - MYSQL_DATABASE=microblog
@@ -21,6 +21,8 @@ services:
         networks:
             microblog:
     mysql:
+        env_file:
+            - .env
         container_name: mysql
         restart: always
         image: mysql/mysql-server:5.7
@@ -30,7 +32,7 @@ services:
             - MYSQL_RANDOM_ROOT_PASSWORD='yes'
             - MYSQL_DATABASE="microblog"
             - MYSQL_USER='microblog'
-            - MYSQL_PASSWORD=<pass>
+            - MYSQL_PASSWORD=${DATABASE_PASS}
         volumes:
             - /var/lib/mysql:/var/lib/mysql
         command: --innodb-use-native-aio=0

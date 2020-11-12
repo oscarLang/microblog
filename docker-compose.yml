@@ -9,11 +9,14 @@ services:
           - "./tests:/home/test/tests"
           - "./app:/home/test/app"
     prod:
+        env_file:
+            - .env
         container_name: microblog
         image: osln17/microblog:latest
         restart: always
         environment:
             - MYSQL_DATABASE=microblog
+            - DATABASE_URL=${URL}
         ports:
             - "8000:5000"
         depends_on:
@@ -21,16 +24,16 @@ services:
         networks:
             microblog:
     mysql:
+        container_name: microblog_db
         env_file:
             - .env
         restart: always
-        image: mysql/mysql-server:5.7
+        image: mysql/mysql-server:8.0
         expose:
-          - "3306"
+            - "3306"
         environment:
-            - MYSQL_RANDOM_ROOT_PASSWORD='yes'
-            - MYSQL_DATABASE="microblog"
-            - MYSQL_USER='microblog'
+            - MYSQL_DATABASE=microblog
+            - MYSQL_USER=microblog
             - MYSQL_PASSWORD=${DATABASE_PASS}
         volumes:
             - microblog-data:/var/lib/mysql

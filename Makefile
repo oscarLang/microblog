@@ -97,10 +97,25 @@ validate:
 
 
 
+<<<<<<< HEAD
 # target: validate-docker                     - Validate Dockerfile with hadolint
 .PHONY: validate-docker
 validate-docker:
 	docker run --rm -i hadolint/hadolint < docker/Dockerfile_prod
+=======
+# target: validate-docker              - Validate Dockerfile with hadolint
+.PHONY: validate-docker
+validate-docker:
+	@docker run --rm -i hadolint/hadolint < docker/Dockerfile_prod
+	@docker run --rm -i hadolint/hadolint < docker/Dockerfile_test
+
+
+
+# target: validate-ci                  - Validate CircleCi config with CircleCi CLI
+.PHONY: validate-ci
+validate-ci:
+	@circleci config validate
+>>>>>>> upstream/master
 
 
 
@@ -142,8 +157,14 @@ exec-tests: test-unit test-integration
 
 # target: test                         - Run tests and display code coverage
 .PHONY: test
+<<<<<<< HEAD
 test:
 	docker-compose run test
+=======
+test: validate exec-tests
+	${py} -m coverage report  --rcfile=.coveragerc
+	$(MAKE) clean-cov
+>>>>>>> upstream/master
 
 
 
@@ -205,3 +226,4 @@ install-test:
 .PHONY: install-deploy
 install-deploy:
 	${pip} install -r requirements/deploy.txt
+	@${pip} install ansible[azure]

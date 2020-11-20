@@ -107,9 +107,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-<<<<<<< HEAD
 
 /scripts
 run_docker.bash
-=======
->>>>>>> upstream/master

@@ -76,8 +76,8 @@ help:
 # target: add-ssh                         - Add ssh key to agent
 .PHONY: add-ssh
 add-ssh:
-	eval `ssh-agent -s`
-	ssh-add <path/too/ssh-key>
+	eval "$(ssh-agent -s)"
+	ssh-add ~oscar/.ssh/pem
 
 
 
@@ -97,12 +97,6 @@ validate:
 
 
 
-<<<<<<< HEAD
-# target: validate-docker                     - Validate Dockerfile with hadolint
-.PHONY: validate-docker
-validate-docker:
-	docker run --rm -i hadolint/hadolint < docker/Dockerfile_prod
-=======
 # target: validate-docker              - Validate Dockerfile with hadolint
 .PHONY: validate-docker
 validate-docker:
@@ -114,8 +108,7 @@ validate-docker:
 # target: validate-ci                  - Validate CircleCi config with CircleCi CLI
 .PHONY: validate-ci
 validate-ci:
-	@circleci config validate
->>>>>>> upstream/master
+	@circleci config validat
 
 
 
@@ -157,14 +150,8 @@ exec-tests: test-unit test-integration
 
 # target: test                         - Run tests and display code coverage
 .PHONY: test
-<<<<<<< HEAD
 test:
 	docker-compose run test
-=======
-test: validate exec-tests
-	${py} -m coverage report  --rcfile=.coveragerc
-	$(MAKE) clean-cov
->>>>>>> upstream/master
 
 
 

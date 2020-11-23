@@ -1,0 +1,10 @@
+---
+-   name: Create app server
+    docker_container:
+        name: microblog
+        image: osln17/microblog:latest
+        restart_policy: always
+        ports:
+            - "8000:5000"
+        env:
+            DATABASE_URL=mysql+pymysql://{{ db_name }}:pass@{{ groups.database[0] }}:3306/microblog

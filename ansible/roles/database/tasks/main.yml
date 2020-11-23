@@ -1,0 +1,15 @@
+---
+-   name: database
+    docker_container:
+        name: mysql
+        image: mysql/mysql-server:8.0
+        restart_policy: always
+        ports:
+            - "3306:3306"
+        volumes:
+            - "microblog-data:/var/lib/mysql"
+        env:
+            MYSQL_DATABASE: "{{ db_name }}"
+            MYSQL_USER: "{{ db_user }}"
+            MYSQL_PASSWORD: "{{ db_password }}"
+            MYSQL_ROOT_PASSWORD: "{{ db_root_password }}"

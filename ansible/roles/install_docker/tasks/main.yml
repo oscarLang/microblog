@@ -1,0 +1,52 @@
+---
+-   name: Update apt-cache and upgrade
+    apt:
+        force_apt_get: yes
+        update-cache: yes
+        cache_valid_time: 3600
+        upgrade: yes
+
+-   name: Install docker prerequties
+    apt:
+        update_cache: yes
+        cache_valid_time: 3600
+        name:
+            [
+                'apt-transport-https',
+                'ca-certificates',
+                'curl',
+                'gnupg-agent',
+                'software-properties-common',
+                'python3-pip'
+            ]
+
+-   name: Add Docker key
+    apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+-   name: Add docker repository into sources list
+    apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ansible_lsb.codename}} stable"
+        state: present
+
+-   name: Update apt-cache without upgrade
+    apt:
+        force_apt_get: yes
+        update-cache: yes
+        cache_valid_time: 3600
+        upgrade: no
+
+-   name: Install docker for python
+    pip:
+      name: docker
+      executable: pip3
+
+-   name: Install docker
+    apt:
+        name:
+            [
+                'docker-ce',
+                'docker-ce-cli',
+                'containerd.io'
+            ]

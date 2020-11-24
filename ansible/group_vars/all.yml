@@ -15,3 +15,5 @@ vmtags:
 pub_ssh_key_location: '/home/oscar/.ssh/pem.pub' # Change me, your local ssh key!
 
 db_name: microblog
+db_user: microblog
+db_password: pass

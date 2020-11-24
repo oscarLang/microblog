@@ -7,4 +7,4 @@
         ports:
             - "8000:5000"
         env:
-            DATABASE_URL=mysql+pymysql://{{ db_name }}:pass@{{ groups.database[0] }}:3306/microblog
+            DATABASE_URL=mysql+pymysql://{{ db_user }}:{{db_password}}@{{ groups.database[0] }}:3306/microblog

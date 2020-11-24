@@ -213,4 +213,4 @@ install-test:
 .PHONY: install-deploy
 install-deploy:
 	${pip} install -r requirements/deploy.txt
-	@${pip} install ansible[azure]
+	@${pip} install 'ansible[azure]<=2.9.13'

@@ -9,7 +9,37 @@
         volumes:
             - "microblog-data:/var/lib/mysql"
         env:
-            MYSQL_DATABASE: "{{ db_name }}"
-            MYSQL_USER: "{{ db_user }}"
-            MYSQL_PASSWORD: "{{ db_password }}"
-            MYSQL_ROOT_PASSWORD: "{{ db_root_password }}"
+            MYSQL_DATABASE: "{{db_name}}"
+            MYSQL_USER: "{{db_user}}"
+            MYSQL_PASSWORD: "{{db_password}}"
+            MYSQL_ROOT_PASSWORD: pass
+
+-   name: Copy setup.sql
+    copy:
+        src: files/setup.sql
+        dest: ~/setup.sql
+        owner: "{{server_user}}"
+        group: "{{server_user}}"
+        mode: "0644"
+
+-   name: Add exporter user to db
+    shell: docker exec -i mysql mysql -uroot -ppass < ~/setup.sql
+    # shell: sudo docker exec -t -i mysql /bin/bash -c "mysql -uroot -p{{ db_root_password }}"
+    # shell: sudo docker exec -it mysql mysql -uroot -p{{ db_root_password }}
+-   name: Pull mysql exporter docker
+    docker_image:
+        name: prom/mysqld-exporter:latest
+
+-   name: Run docker exporter commands
+    command:
+          sudo docker run -d \
+            -p 9104:9104 \
+            --network host \
+            -e DATA_SOURCE_NAME="exporter:{{ exp_pass }}@(localhost:3306)/" \
+            --restart always \
+            prom/mysqld-exporter:latest \
+            --collect.auto_increment.columns \
+            --collect.binlog_size \
+            --collect.engine_innodb_status \
+            --collect.engine_tokudb_status \
+            --collect.global_status

@@ -1,2 +1,3 @@
 ---
-db_root_password: $6$5KJoAo19BFc$HMWgCILyk/Xw65ik0E.2m7tzYdycAQ.hHBwByBHhq02FnHhz0avD5kq.hoIKhWeZgUO.Vztla1nnjzLfdw4.c0
+db_root_password: pass
+exp_pass: pass

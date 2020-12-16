@@ -101,16 +101,30 @@ jobs:
 
 workflows:
   version: 2
+  run-test:
+    jobs:
+      - snyk:
+          filters:
+            tags:
+              ignore: /^v.*/
+      - test:
+          filters:
+            tags:
+              ignore: /^v.*/
   build-tags:
     jobs:
       - snyk:
           filters:
+            tags:
+              only: /^v.*/
             branches:
-              only: main
+              ignore: /.*/
       - test:
           filters:
+            tags:
+              only: /^v.*/
             branches:
-              only: main
+              ignore: /.*/
       - build:
           requires:
               - snyk

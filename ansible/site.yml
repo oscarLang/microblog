@@ -1,9 +1,10 @@
 ---
 -   import_playbook: gather_vm_instances.yml
--   import_playbook: terminate_instances.yml
--   import_playbook: provision_instances.yml
--   import_playbook: gather_vm_instances.yml
--   import_playbook: 10-first-minutes.yml
+# -   import_playbook: terminate_instances.yml
+# -   import_playbook: provision_instances.yml
+# -   import_playbook: gather_vm_instances.yml
+# -   import_playbook: 10-first-minutes.yml
 -   import_playbook: microblog_database.yml
--   import_playbook: microblog_appserver.yml
--   import_playbook: microblog_loadbalancer.yml
+# -   import_playbook: microblog_appserver.yml
+# -   import_playbook: microblog_loadbalancer.yml
+# -   import_playbook: microblog_monitoring.yml

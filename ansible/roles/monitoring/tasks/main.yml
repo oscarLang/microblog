@@ -7,19 +7,27 @@
 
 -   name: Extract node exprter
     unarchive:
-        src: node_exporter-1.0.1.linux-amd64.tar.gz
-        dest: .
+        src: https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+        dest: /tmp/
+        remote_src: yes
+
+-   name: Check if user node_exporter exists
+    command: getent passwd node_exporter
+    register: node_exporter
+    ignore_errors: yes
 
 -   name: create node_exporter user
     command: sudo useradd -rs /bin/false node_exporter
+    when: node_exporter.stdout == ""
 
 -   name: Copy the binary to your /usr/local/bin folder
     copy:
-        src: /node_exporter-1.0.1.linux-amd64/node_exporter
+        src: /tmp/node_exporter-1.0.1.linux-amd64/node_exporter
         dest: /usr/local/bin/
         owner: node_exporter
         group: node_exporter
-        mode: '0644'
+        mode: '0744'
+        remote_src: yes
 
 -   name: Template node exporter service config
     template:
@@ -27,7 +35,7 @@
         dest: /etc/systemd/system/node_exporter.service
         owner: "{{server_user}}"
         group: "{{server_user}}"
-        mode: "0644"
+        mode: "0744"
 
 -   name: reload deamon
     command: sudo systemctl daemon-reload
@@ -35,34 +43,86 @@
 -   name: start node exporter service
     command: sudo systemctl start node_exporter
 
--   name: check status of node Exporter
-    command: sudo systemctl status node_exporter.service
+# -   name: check status of node Exporter
+#     command: sudo systemctl status node_exporter.service
 
 -   name: enable start of service on boot
     command: sudo systemctl enable node_exporter
 
--   name: Download Prometheus
-    get_url:
-        url: https://github.com/prometheus/prometheus/releases/download/v2.23.0/prometheus-2.23.0.linux-amd64.tar.gz
-        dest: .
+# -   name: Download Prometheus
+#     get_url:
+#         url: https://github.com/prometheus/prometheus/releases/download/v2.23.0/prometheus-2.23.0.linux-amd64.tar.gz
+#         dest: .
 
 -   name: Extract Prometheus
     unarchive:
-        src: prometheus-2.23.0.linux-amd64.tar.gz
-        dest: .
+        src: https://github.com/prometheus/prometheus/releases/download/v2.23.0/prometheus-2.23.0.linux-amd64.tar.gz
+        dest: /usr/local/bin/
+        remote_src: yes
+        owner: "{{server_user}}"
+        group: "{{server_user}}"
+        mode: "0777"
+#
+# -   name: Extract Prometheus
+#     unarchive:
+#         src: prometheus-2.23.0.linux-amd64.tar.gz
+#         dest: .
+
+-   name: Create directory for query logs
+    file:
+        path: /var/lib/prometheus
+        state: directory
+        owner: "{{server_user}}"
+        group: "{{server_user}}"
+        mode: "0777"
+
 
 -   name: Template prometheus config
     template:
         src: prometheus.yml.j2
-        dest: prometheus-2.23.0.linux-amd64/prometheus.yml
+        dest: /usr/local/bin/prometheus-2.23.0.linux-amd64/prometheus.yml
+        owner: "{{server_user}}"
+        group: "{{server_user}}"
+        mode: "0777"
+
+# -   name: Start prometheus service
+#     shell: 'nohup ./prometheus &'
+#     args:
+#         chdir: /usr/local/bin/prometheus-2.23.0.linux-amd64/
+
+-   name: Template prometheus service
+    template:
+        src: prometheus.service.j2
+        dest: /etc/systemd/system/prometheus.service
         owner: "{{server_user}}"
         group: "{{server_user}}"
         mode: "0644"
 
--   name: Launch prometheus
-    command:
-        cd /prometheus-2.23.0.linux-amd64 \
-        ./prometheus &
+# -   name: Start prometheus service
+#     service:
+#         name: prometheus
+#         state: started
+#         enabled: yes
+
+-   name: Reload Prometheuse to register changes
+    shell: |
+        sudo systemctl daemon-reload
+        sudo systemctl start prometheus
+        sudo systemctl status prometheus
+
+-   name: Install dependencies for grafana
+    apt:
+        force_apt_get: yes
+        cache_valid_time: 3600
+        name:
+            [
+                'apt-transport-https',
+                'adduser',
+                'ca-certificates',
+                'libfontconfig',
+                'gnupg2'
+            ]
+
 
 -   name: Download grafana
     get_url:
@@ -71,3 +131,28 @@
 
 -   name: Extract grafana deb
     command: sudo dpkg -i grafana_7.3.4_amd64.deb
+
+-   name: Change domain
+    lineinfile:
+        path: /etc/grafana/grafana.ini
+        regexp: "^;domain"
+        state: present
+        line: "domain = {{domain_name}}"
+    ignore_errors: yes
+
+-   name: Change root_url
+    lineinfile:
+        path: /etc/grafana/grafana.ini
+        regexp: "^;root_url"
+        line: "root_url = %(protocol)s://%(domain)s/grafana/"
+        state: present
+    ignore_errors: yes
+
+-   name: reload deamon
+    command: sudo systemctl daemon-reload
+
+-   name: Start grafana-server service
+    service:
+        name: grafana-server
+        state: started
+        enabled: yes

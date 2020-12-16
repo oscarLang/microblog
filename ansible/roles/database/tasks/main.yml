@@ -23,7 +23,7 @@
         mode: "0644"
 
 -   name: Add exporter user to db
-    shell: docker exec -i mysql mysql -uroot -ppass < ~/setup.sql
+    shell: sudo docker exec -i mysql mysql -uroot -ppass < ~/setup.sql
     # shell: sudo docker exec -t -i mysql /bin/bash -c "mysql -uroot -p{{ db_root_password }}"
     # shell: sudo docker exec -it mysql mysql -uroot -p{{ db_root_password }}
 -   name: Pull mysql exporter docker
@@ -35,7 +35,7 @@
           sudo docker run -d \
             -p 9104:9104 \
             --network host \
-            -e DATA_SOURCE_NAME="exporter:{{ exp_pass }}@(localhost:3306)/" \
+            -e DATA_SOURCE_NAME=exporter:pass@(localhost:3306)/ \
             --restart always \
             prom/mysqld-exporter:latest \
             --collect.auto_increment.columns \

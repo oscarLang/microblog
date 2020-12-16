@@ -57,3 +57,6 @@
     service:
         name: nginx
         state: restarted
+
+# -   name: Run docker exporter commands
+#     command: docker run -p 9113:9113 nginx/nginx-prometheus-exporter:0.8.0 -nginx.scrape-uri http://oscarlang.tech/metrics -nginx.retries 10 -nginx.ssl-verify false -web.telemetry-path /prometheus

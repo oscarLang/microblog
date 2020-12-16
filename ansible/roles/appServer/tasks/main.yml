@@ -4,7 +4,17 @@
         name: microblog
         image: osln17/microblog:latest
         restart_policy: always
-        ports:
-            - "8000:5000"
+        network_mode: host
         env:
             DATABASE_URL=mysql+pymysql://{{ db_user }}:{{db_password}}@{{ groups.database[0] }}:3306/microblog
+
+-   name: COPY stats config file
+    template:
+        src: statsd.conf.j2
+        dest: statsd.conf
+        owner: "{{server_user}}"
+        group: "{{server_user}}"
+        mode: "0644"
+
+-   name: Run statsd exporter
+    command: docker run -dP --net=host -v ${PWD}/statsd.conf:/statsd/statsd.conf prom/statsd-exporter "--statsd.mapping-config=/statsd/statsd.conf"

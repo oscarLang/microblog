@@ -110,6 +110,9 @@ validate-docker:
 validate-ci:
 	@circleci config validat
 
+.PHONY: bandit
+bandit:
+	bandit -r app
 
 
 # target: test-integration             - Run tests in tests/integration with coverage.py

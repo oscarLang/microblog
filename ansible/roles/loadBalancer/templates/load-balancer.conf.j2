@@ -6,6 +6,7 @@ http {
 
     access_log /var/log/nginx/access.log;
     error_log /var/log/nginx/error.log;
+    server_tokens off;
 
     # This server accepts all traffic to port 80 and passes it to the upstream.
     # Notice that the upstream name and the proxy_pass need to match.
@@ -29,8 +30,10 @@ http {
     server {
         listen 443 ssl;
         server_name  {{ domain_name }} www.{{ domain_name }};
-        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
-
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header Content-Security-Policy "default-src 'self';";
+        add_header X-Frame-Options "sameorigin";
+        add_header X-Frame-Type-Options "nosniff";
         ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/cert.pem;
         ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
         ssl_protocols TLSv1 TLSv1.1 TLSv1.2;

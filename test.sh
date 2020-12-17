@@ -1,3 +1,3 @@
 #!/bin/sh
 . .venv/bin/activate
-make validate bandit exec-tests
+make validate bandit zap exec-tests

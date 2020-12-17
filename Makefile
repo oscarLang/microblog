@@ -114,6 +114,10 @@ validate-ci:
 bandit:
 	bandit -r app
 
+.PHONY: zap
+zap:
+	docker run -t owasp/zap2docker-stable zap-baseline.py -t https://oscarlang.tech/
+
 
 # target: test-integration             - Run tests in tests/integration with coverage.py
 .PHONY: test-integration

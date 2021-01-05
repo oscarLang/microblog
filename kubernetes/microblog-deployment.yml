@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: microblog
+spec:
+  type: NodePort
+  ports:
+    - port: 5000
+  selector:
+    app: microblog
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: microblog
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: microblog
+  template:
+    metadata:
+      labels:
+        app: microblog
+    spec:
+      containers:
+      - image: osln17/microblog:no-statsd
+        name: microblog
+        env:
+        - name: MYSQL_DATABASE
+          value: microblog
+        - name: DATABASE_URL
+          value: mysql+pymysql://microblog:micropassw@mysql/microblog
+        ports:
+        - containerPort: 5000
+          name: microblog
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000

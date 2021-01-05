@@ -41,7 +41,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            make validate bandit zap exec-tests
+            make validate bandit exec-tests
 
   build:
     executor: docker-publisher
